@@ -14,18 +14,24 @@ export class UtilisateursService {
   ) {}
 
   async create(createUtilisateurDto: CreateUtilisateurDto) {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(
-      createUtilisateurDto.password,
-      salt,
-    );
-    return {
-      resultat: await this.utilisateursRepository.save({
-        ...createUtilisateurDto,
-        password: hashedPassword,
-      }),
-      message: 'Utilisateur ajouté avec succès',
-    };
+    try {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(
+        createUtilisateurDto.password,
+        salt,
+      );
+      return {
+        resultat: await this.utilisateursRepository.save({
+          ...createUtilisateurDto,
+          password: hashedPassword,
+        }),
+        message: 'Utilisateur ajouté avec succès',
+      };
+    } catch (error) {
+      return {
+        message: error.message,
+      };
+    }
   }
 
   async findAll() {
